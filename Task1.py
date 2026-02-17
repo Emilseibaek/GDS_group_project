@@ -6,7 +6,7 @@ import pandas as pd
 import nltk
 
 
-df_lib = pd.read_csv("995,000_rows.csv")
+df_lib = pd.read_csv("995,000_rows.csv", low_memory=False, nrows=10000)
 
 text_cols = df_lib.select_dtypes(include='object').columns
 for col in text_cols:
@@ -69,5 +69,5 @@ print(len(unique_words_aftertokenization))
 print(len(unique_words_afterstopwordremoval))
 print(len(unique_words_afterstemming))
 
-df = pd.DataFrame({'Wordsafterstemming': unique_words_afterstemming})
+df = pd.DataFrame({'Wordsafterstemming': list(unique_words_afterstemming)})
 df.to_csv('wordsafterstemming.csv', index=False)
