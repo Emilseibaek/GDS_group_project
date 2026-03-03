@@ -7,10 +7,10 @@ import nltk
 
 
 # read cleaned words
-df = pd.read_csv("cleaned_words.csv")
+df = pd.read_csv("cleaned_words_995k.csv")
 
 # join all cleaned words
-processed_words = ' '.join(df['Cleaned_words'].astype(str).values.flatten())
+processed_words = ' '.join(df['Cleaned_words_995k'].astype(str).values.flatten())
 
 # count url, date, number
 url_count = processed_words.lower().count('url')
