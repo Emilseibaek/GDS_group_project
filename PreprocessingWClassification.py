@@ -16,7 +16,9 @@ chunksize = 10000
 total_rows = 995000
 processed_rows = 0
 
-stop_words = set(stopwords.words('english'))
+stop_words = set()
+for lang in ['arabic', 'azerbaijani', 'danish', 'dutch', 'english', 'finnish', 'french', 'german', 'greek', 'hungarian', 'indonesian', 'italian', 'kazakh', 'nepali', 'norwegian', 'portuguese', 'romanian', 'russian', 'slovene', 'spanish', 'swedish', 'tajik', 'turkish']:
+    stop_words.update(stopwords.words(lang))
 stemmer = PorterStemmer()
 
 # Create or clear the output CSV
