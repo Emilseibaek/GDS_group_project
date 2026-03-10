@@ -22,6 +22,8 @@ News=pd.read_csv("sample_cleaned_for_classification.csv",nrows=1000)
 
 def linreg(df):
     
+    df = df.dropna(subset=["cleaned_text"])
+
     X=df["cleaned_text"]
     y=list(map(binarytype,df["type"]))
     
