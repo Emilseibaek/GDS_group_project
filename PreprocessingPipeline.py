@@ -57,7 +57,7 @@ for chunk in pd.read_csv("995,000_rows.csv", low_memory=False, chunksize=chunksi
         
         for text in cleaned_series:
             raw_tokens = nltk.word_tokenize(text)
-            # Filter and stem
+        
             for word in raw_tokens:
                 if word not in stop_words and word.isalnum():
                     chunk_stemmed_tokens.append(stemmer.stem(word))
