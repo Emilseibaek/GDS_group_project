@@ -13,7 +13,7 @@ nltk.download('stopwords', quiet=True)
 print("Reading and processing data in chunks...")
 
 chunksize = 10000
-total_rows = 995000
+total_rows = 10000
 processed_rows = 0
 
 stop_words = set()
@@ -22,7 +22,7 @@ for lang in ['arabic', 'azerbaijani', 'danish', 'dutch', 'english', 'finnish', '
 stemmer = PorterStemmer()
 
 # Create or clear the output CSV
-output_csv = 'cleaned_for_classification.csv'
+output_csv = 'sample_cleaned_for_classification.csv'
 with open(output_csv, 'w') as f:
     f.write('type,cleaned_text\n')
 
