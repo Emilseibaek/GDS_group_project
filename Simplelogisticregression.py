@@ -26,9 +26,9 @@ def logreg(df):
     X=df["cleaned_text"]
     y=list(map(binarytype,df["type"]))
     
-    X_train_val,X_test,Y_train_val,Y_test=train_test_split(X,y,test_size=0.1,random_state=42,stratify=y)
+    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.1, random_state=42, stratify=y)
 
-    X_train, X_val, Y_train, Y_val= train_test_split(X_train_val,Y_train_val,test_size=0.1,random_state=42,stratify=Y_train_val)
+    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=1/9, random_state=42, stratify=y_train_val)
 
     vectorizer=CountVectorizer(max_features=10000)
     
@@ -38,12 +38,12 @@ def logreg(df):
     X_val=vectorizer.transform(X_val)
 
 
-    model = LogisticRegression(max_iter=1000,C=0.1)
-    model.fit(X_train, Y_train)
+    model = LogisticRegression(max_iter=1000, C=0.1)
+    model.fit(X_train, y_train)
 
     y_val_pred = model.predict(X_val)
-    print("Validation F1:",f1_score(Y_val, y_val_pred,average='binary',pos_label="fake"))
+    print("Validation F1:", f1_score(y_val, y_val_pred, average='binary', pos_label="fake"))
     y_test_pred = model.predict(X_test)
-    print("Test F1:", f1_score(Y_test,y_test_pred,average="binary",pos_label="fake"))
+    print("Test F1:", f1_score(y_test, y_test_pred, average="binary", pos_label="fake"))
 
 logreg(News) 

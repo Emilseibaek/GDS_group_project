@@ -26,7 +26,6 @@ output_csv = 'sample_cleaned_for_classification.csv'
 with open(output_csv, 'w') as f:
     f.write('type,cleaned_text\n')
 
-# Setup date pattern regex once
 date_pattern = r'\b(\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}|\d{1,2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s\d{2,4})\b'
 
 def cleantext(text):
@@ -49,30 +48,25 @@ def cleantext(text):
 
 for chunk in pd.read_csv("995,000_rows.csv", chunksize=chunksize, nrows=total_rows, low_memory=False):
     
-    rows = []  # Reset per chunk to avoid memory buildup
+    rows = []  
 
     for _, row in chunk.iterrows():
         label = row.get("type", None)
         
-        # Skip rows without a label
         if pd.isna(label):
             continue
 
-        # Clean the content text
         text = str(row.get("content", ""))
         cleaned = cleantext(text)
 
-        # Tokenize, filter, and stem
         tokens = nltk.word_tokenize(cleaned)
         stemmed = [stemmer.stem(w) for w in tokens if w not in stop_words and w.isalnum()]
 
-        # Save the label + the cleaned text as a joined string
         rows.append({
             "type": label,
             "cleaned_text": " ".join(stemmed)
         })
 
-    # Append this chunk to the CSV (header already written above)
     chunk_df = pd.DataFrame(rows)
     chunk_df.to_csv(output_csv, mode='a', header=False, index=False)
 
