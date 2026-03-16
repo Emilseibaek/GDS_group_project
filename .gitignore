@@ -1,1 +1,4 @@
 *.csv
+*.tsv
+/liar_dataset
+.DS_Store
