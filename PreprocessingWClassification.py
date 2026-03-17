@@ -13,7 +13,7 @@ nltk.download('stopwords', quiet=True)
 print("Reading and processing data in chunks...")
 
 chunksize = 10000
-total_rows = 995000
+total_rows = 90000
 processed_rows = 0
 
 stop_words = set()
@@ -22,9 +22,9 @@ for lang in ['arabic', 'azerbaijani', 'danish', 'dutch', 'english', 'finnish', '
 stemmer = PorterStemmer()
 
 # Create or clear the output CSV
-output_csv = 'cleaned_for_classification.csv'
+output_csv = 'extended_cleaned_for_classification.csv'
 with open(output_csv, 'w') as f:
-    f.write('type,cleaned_text\n')
+    f.write('type,domain,title,cleaned_text\n')
 
 # Setup date pattern regex once
 date_pattern = r'\b(\d{1,4}[-/.]\d{1,2}[-/.]\d{1,4}|\d{1,2}\s(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s\d{2,4})\b'
@@ -53,7 +53,9 @@ for chunk in pd.read_csv("995,000_rows.csv", chunksize=chunksize, nrows=total_ro
 
     for _, row in chunk.iterrows():
         label = row.get("type", None)
-        
+        Dlabel=row.get("domain",None)
+        Tlabel=row.get("title",None)
+
         # Skip rows without a label
         if pd.isna(label):
             continue
@@ -69,6 +71,8 @@ for chunk in pd.read_csv("995,000_rows.csv", chunksize=chunksize, nrows=total_ro
         # Save the label + the cleaned text as a joined string
         rows.append({
             "type": label,
+            "Domain":Dlabel,
+            "title":Tlabel,
             "cleaned_text": " ".join(stemmed)
         })
 
