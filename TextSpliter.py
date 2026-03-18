@@ -11,6 +11,8 @@ for fname in ["training_data.csv", "test_data.csv", "validation_data.csv"]:
 
 for chunks in pd.read_csv("cleaned_for_classification.csv", chunksize=chunksize, nrows=total_rows):
     
+    chunks = chunks.sample(frac=1, random_state=42).reset_index(drop=True)
+    
     #split data chunk in 80%, 10%, 10% randomly with overlapping
     traning_data = chunks.iloc[:int(len(chunks)*0.8)]
     test_data = chunks.iloc[int(len(chunks)*0.8):int(len(chunks)*0.9)]
