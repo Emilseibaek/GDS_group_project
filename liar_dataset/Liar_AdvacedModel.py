@@ -38,17 +38,24 @@ X_val   = vectorizer.transform(X_val)
 
 model=LinearSVC(C=0.1,dual=True,max_iter=1000,penalty='l2')
 
-#weights = compute_sample_weight(class_weight='balanced', y=y_train)
-#model.fit(X_train, y_train, sample_weight=weights)
 
 model.fit(X_train,y_train)
 
-Wmodel_y_val_pred=model.predict(X_val)
-print("W model Validation F1:", f1_score(y_val, Wmodel_y_val_pred, average='macro'))
-print('accuracy',accuracy_score(y_val,Wmodel_y_val_pred))
+y_val_pred=model.predict(X_val)
+
+print("Validation F1:", f1_score(y_val, y_val_pred, average='macro'))
+print("Validation accuracy:", accuracy_score(y_val, y_val_pred))
 print("Validation Confusion Matrix:")
-print(confusion_matrix(y_val, Wmodel_y_val_pred, labels=['false', 'half-true', 'mostly-true', 'true', 'barely-true', 'pants-fire']))
-    
+print(confusion_matrix(y_val, y_val_pred,
+      labels=['false','half-true','mostly-true','true','barely-true','pants-fire']))
+
+y_test_pred=model.predict(X_test)
+
+print("Test F1:", f1_score(y_test, y_test_pred, average='macro'))
+print("Test accuracy:", accuracy_score(y_test, y_test_pred))
+print("Test Confusion Matrix:")
+print(confusion_matrix(y_test, y_test_pred,
+      labels=['false','half-true','mostly-true','true','barely-true','pants-fire']))
 
 
 # y_test_pred = model.predict(X_test)
