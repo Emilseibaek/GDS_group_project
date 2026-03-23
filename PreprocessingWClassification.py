@@ -13,7 +13,7 @@ nltk.download('stopwords', quiet=True)
 print("Reading and processing data in chunks...")
 
 chunksize = 10000
-total_rows = 90000
+total_rows = 995000
 processed_rows = 0
 
 stop_words = set()
@@ -68,7 +68,7 @@ for chunk in pd.read_csv("995,000_rows.csv", chunksize=chunksize, nrows=total_ro
 
         rows.append({
             "type": label,
-            "Domain":Dlabel,
+            "domain":Dlabel,
             "title":Tlabel,
             "cleaned_text": " ".join(stemmed)
         })
