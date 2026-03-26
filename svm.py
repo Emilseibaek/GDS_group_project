@@ -1,88 +1,92 @@
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, make_scorer
+from sklearn.metrics import f1_score, accuracy_score, confusion_matrix
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import RandomizedSearchCV,GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
-def binarytype(label):
+def fakenews_binarytype(label):
     if label != "reliable":
         return "fake"
     return "reliable"
 
+def Liar_binarytype(label):
+    if label in['false','barely-true','pants-fire']:
+        return "fake"
+    return "reliable"
 
-# Load data
-train_df = pd.read_csv("training_data.csv",nrows=100000).dropna(subset=["cleaned_text"])
-test_df  = pd.read_csv("test_data.csv",nrows=10000).dropna(subset=["cleaned_text"])
-val_df   = pd.read_csv("validation_data.csv",nrows=10000).dropna(subset=["cleaned_text"])
 
+# Fake news data
+train_df = pd.read_csv("training_data.csv").dropna(subset=["cleaned_text"])
+test_df  = pd.read_csv("test_data.csv").dropna(subset=["cleaned_text"])
+val_df   = pd.read_csv("validation_data.csv").dropna(subset=["cleaned_text"])
 
 X_train = train_df["cleaned_text"]
 X_test  = test_df["cleaned_text"]
 X_val   = val_df["cleaned_text"]
 
-y_train = list(map(binarytype, train_df["type"]))
-y_test  = list(map(binarytype, test_df["type"]))
-y_val   = list(map(binarytype, val_df["type"]))
+y_train = list(map(fakenews_binarytype, train_df["type"]))
+y_test  = list(map(fakenews_binarytype, test_df["type"]))
+y_val   = list(map(fakenews_binarytype, val_df["type"]))
+
+# Liar Data
+Liar_test_df  = pd.read_csv("test.tsv",  sep='\t', header=None).dropna(subset=[2])
+Liar_val_df   = pd.read_csv("valid.tsv", sep='\t', header=None).dropna(subset=[2])
+
+Liar_X_test  = Liar_test_df.iloc[:, 2]
+Liar_X_val   = Liar_val_df.iloc[:, 2]
+
+
+Liar_y_test  = Liar_test_df.iloc[:,1].map(Liar_binarytype)
+Liar_y_val   = Liar_val_df.iloc[:,1].map(Liar_binarytype)
 
 
 # Pipeline: vectorizer + model
 pipeline = Pipeline([
-    ("vectorizer", TfidfVectorizer(ngram_range=(1,2),min_df=5,max_df=0.9,sublinear_tf=True,max_features=None)),
+    ("vectorizer", TfidfVectorizer(ngram_range=(1,2),min_df=5,max_df=0.9,sublinear_tf=True,max_features=20000)),
     ("model", LinearSVC(C=5))
 ])
 
 
-# param_grid = {
-#     'vectorizer__max_features': (1000, 2000, None),
-#     'vectorizer__sublinear_tf': (True, False)
-# }
-# Best parameters: {'vectorizer__ngram_range': (1, 2), 'vectorizer__min_df': 5, 'vectorizer__max_df': 0.9, 'model__C': 5}
-# Best CV F1: 0.9701993085162154
-
-
-# Scoring (F1 for fake class)
-# scorer = make_scorer(f1_score, average="binary", pos_label="fake")
-
-
-# grid = GridSearchCV(
-#     pipeline,
-#     param_grid,
-#     scoring=scorer,
-#     cv=3,
-#     n_jobs=1,
-#     verbose=2
-# )
-
 pipeline.fit(X_train, y_train)
 
 
-# Best model
-# print("Best parameters:", grid.best_params_)
-# print("Best CV F1:", grid.best_score_)
-
-# best_model = grid.best_estimator_
-
-
-# Validation evaluation
+# Fake News Validation evaluation
 val_pred = pipeline.predict(X_val)
 
-print("\nValidation F1:",
+print("\n Fake NewS Validation F1:",
       f1_score(y_val, val_pred, average="binary", pos_label="fake"))
 
-print("Validation Confusion Matrix:")
+print("Fake News validation Confusion Matrix:")
 print(confusion_matrix(y_val, val_pred, labels=["fake", "reliable"]))
 
 
-# Test evaluation
+# Fake News Test evaluation
 test_pred = pipeline.predict(X_test)
 
-print("\nTest F1:",
+print("\nFake News test F1:",
       f1_score(y_test, test_pred, average="binary", pos_label="fake"))
 
-print("Test Confusion Matrix:")
+print("Fake News Test Confusion Matrix:")
 print(confusion_matrix(y_test, test_pred, labels=["fake", "reliable"]))
 
-print("Test Accuracy:",
+print("Fake news Test Accuracy:",
       accuracy_score(y_test, test_pred))
+
+#Liar Val evaluation
+
+Liar_val_pred=pipeline.predict(Liar_X_val)
+
+print("Validation F1:", f1_score(Liar_y_val, Liar_val_pred,average='binary',pos_label='fake'))
+print("Validation accuracy:", accuracy_score(Liar_y_val, Liar_val_pred))
+print("Validation Confusion Matrix:")
+print(confusion_matrix(Liar_y_val, Liar_val_pred,labels=["fake", "reliable"]))
+
+#Liar Test Evaluation
+Liar_test_pred=pipeline.predict(Liar_X_test)
+
+print("Test F1:", f1_score(Liar_y_test, Liar_test_pred, average='binary',pos_label='fake'))
+print("Test accuracy:", accuracy_score(Liar_y_test, Liar_test_pred))
+print("Test Confusion Matrix:")
+print(confusion_matrix(Liar_y_test, Liar_test_pred,labels=["fake", "reliable"]))
+
