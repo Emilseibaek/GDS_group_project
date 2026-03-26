@@ -30,13 +30,13 @@ y_val   = Liar_val_df.iloc[:, 1]
 
 
 
-vectorizer = TfidfVectorizer(max_features=10000)
+vectorizer = TfidfVectorizer(ngram_range=(1,2),min_df=5,max_df=0.9,sublinear_tf=True,max_features=None)
 X_train = vectorizer.fit_transform(X_train)
 X_test  = vectorizer.transform(X_test)
 X_val   = vectorizer.transform(X_val)
 
 
-model=LinearSVC(C=0.1,dual=True,max_iter=1000,penalty='l2')
+model=LinearSVC(C=5)
 
 
 model.fit(X_train,y_train)

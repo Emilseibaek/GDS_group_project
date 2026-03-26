@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import f1_score, accuracy_score, confusion_matrix, make_scorer
 from sklearn.svm import LinearSVC
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV,GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
@@ -13,9 +13,9 @@ def binarytype(label):
 
 
 # Load data
-train_df = pd.read_csv("training_data.csv").dropna(subset=["cleaned_text"])
-test_df  = pd.read_csv("test_data.csv").dropna(subset=["cleaned_text"])
-val_df   = pd.read_csv("validation_data.csv").dropna(subset=["cleaned_text"])
+train_df = pd.read_csv("training_data.csv",nrows=100000).dropna(subset=["cleaned_text"])
+test_df  = pd.read_csv("test_data.csv",nrows=10000).dropna(subset=["cleaned_text"])
+val_df   = pd.read_csv("validation_data.csv",nrows=10000).dropna(subset=["cleaned_text"])
 
 
 X_train = train_df["cleaned_text"]
@@ -29,49 +29,44 @@ y_val   = list(map(binarytype, val_df["type"]))
 
 # Pipeline: vectorizer + model
 pipeline = Pipeline([
-    ("vectorizer", TfidfVectorizer()),
-    ("model", LinearSVC(class_weight="balanced"))
+    ("vectorizer", TfidfVectorizer(ngram_range=(1,2),min_df=5,max_df=0.9,sublinear_tf=True,max_features=None)),
+    ("model", LinearSVC(C=5))
 ])
 
 
-# Hyperparameter grid
-param_grid = {
-    "vectorizer__ngram_range": [(1,1), (1,2)],
-    "vectorizer__max_features": [10000, 20000],
-    "vectorizer__min_df": [2, 5],
-    "vectorizer__max_df": [0.9, 0.95],
-    "vectorizer__stop_words": ["english"],
-    "vectorizer__sublinear_tf": [True, False],
-    "model__C": [0.01, 0.1, 1, 5]
-}
+# param_grid = {
+#     'vectorizer__max_features': (1000, 2000, None),
+#     'vectorizer__sublinear_tf': (True, False)
+# }
+# Best parameters: {'vectorizer__ngram_range': (1, 2), 'vectorizer__min_df': 5, 'vectorizer__max_df': 0.9, 'model__C': 5}
+# Best CV F1: 0.9701993085162154
 
 
 # Scoring (F1 for fake class)
-scorer = make_scorer(f1_score, average="binary", pos_label="fake")
+# scorer = make_scorer(f1_score, average="binary", pos_label="fake")
 
 
-# Grid search
-grid = GridSearchCV(
-    pipeline,
-    param_grid,
-    scoring=scorer,
-    cv=5,
-    n_jobs=-1,
-    verbose=2
-)
+# grid = GridSearchCV(
+#     pipeline,
+#     param_grid,
+#     scoring=scorer,
+#     cv=3,
+#     n_jobs=1,
+#     verbose=2
+# )
 
-grid.fit(X_train, y_train)
+pipeline.fit(X_train, y_train)
 
 
 # Best model
-print("Best parameters:", grid.best_params_)
-print("Best CV F1:", grid.best_score_)
+# print("Best parameters:", grid.best_params_)
+# print("Best CV F1:", grid.best_score_)
 
-best_model = grid.best_estimator_
+# best_model = grid.best_estimator_
 
 
 # Validation evaluation
-val_pred = best_model.predict(X_val)
+val_pred = pipeline.predict(X_val)
 
 print("\nValidation F1:",
       f1_score(y_val, val_pred, average="binary", pos_label="fake"))
@@ -81,7 +76,7 @@ print(confusion_matrix(y_val, val_pred, labels=["fake", "reliable"]))
 
 
 # Test evaluation
-test_pred = best_model.predict(X_test)
+test_pred = pipeline.predict(X_test)
 
 print("\nTest F1:",
       f1_score(y_test, test_pred, average="binary", pos_label="fake"))

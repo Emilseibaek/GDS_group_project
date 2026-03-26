@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score,classification_report
+from sklearn.metrics import f1_score,classification_report,accuracy_score
 from sklearn.metrics import confusion_matrix
 
 
@@ -44,5 +44,5 @@ y_test_pred = model.predict(X_test)
 print("Test F1:", f1_score(y_test, y_test_pred,average='macro'))
 print("Test Confusion Matrix:")
 print(confusion_matrix(y_test, y_test_pred, labels=['false', 'half-true', 'mostly-true', 'true', 'barely-true', 'pants-fire']))
-
+print("accuracy:",accuracy_score(y_test,y_test_pred))
 
