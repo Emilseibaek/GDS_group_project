@@ -66,7 +66,7 @@ max_features = 10000
 min_df = 5
 ngram_range = (1,1)
 
-Results
+Results:
 
 Model	Validation F1	Test F1	Accuracy
 Logistic Regression	~0.96	~0.96	~0.93
