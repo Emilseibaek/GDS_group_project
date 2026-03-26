@@ -49,9 +49,11 @@ How to Run:
 1. Preprocess data
 
 python PreprocessingWClassification.py
+
 2. Split dataset
 
 python TextSpliter.py
+
 3. Train and evaluate model
 
 python svm.py
