@@ -36,7 +36,7 @@ print("\nTop 100 words before cleaning:")
 print(word_counter_raw.most_common(100))
 
 #after cleaning
-print("\nProcessing cleaned text...")
+print("\nProcessing clean text")
 
 df_clean = pd.read_csv("cleaned_for_classification.csv")
 texts_clean = df_clean["cleaned_text"].dropna().astype(str)
