@@ -10,7 +10,6 @@ from sklearn.metrics import confusion_matrix
 
 
 
-#fitNaiveBayes(content,type)
 
 def binarytype(label):
     if label!="reliable":
