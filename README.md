@@ -2,7 +2,7 @@ Fake News Project
 
 Overview:
 This project focuses on detecting fake news articles.
-We preprocess a large-scale dataset and train classification models (Logistic Regression and Support Vector Machine) using TF-IDF representations.
+We preprocess a large-scale dataset and train classification models (Logistic Regression and Support Vector Machine).
 
 
 Dataset:
