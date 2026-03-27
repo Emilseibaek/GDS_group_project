@@ -22,7 +22,7 @@ for lang in ['arabic', 'azerbaijani', 'danish', 'dutch', 'english', 'finnish', '
 stemmer = PorterStemmer()
 
 # Create or clear the output CSV
-output_csv = 'extended_cleaned_for_classification.csv'
+output_csv = 'cleaned_for_classification.csv'
 with open(output_csv, 'w') as f:
     f.write('type,domain,title,cleaned_text\n')
 
